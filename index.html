@@ -87,21 +87,160 @@
     </section>
   </main>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "b3d0e3613e524aceae006a3b460266e4"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
   <script>
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
-    });
+      //Step 2 - try/catch/finally/throw
+      try {
+        let output = document.querySelector('output');
+        let firstNum = document.querySelector('#first-num').value;
+        let secondNum = document.querySelector('#second-num').value;
+        let operator = document.querySelector('#operator').value;
 
+        if (secondNum == 0 && operator === '/') {
+          throw new Error ("Division by zero is not allowed."); 
+        }
+
+        if (isNaN(firstNum) || isNaN(secondNum)) {
+          throw new ValidationError ('One or more input(s) are not numbers'); //custom error
+        }
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } 
+      catch (err) {
+        alert('Invalid input(s)');
+        console.error (err);
+        TrackJS.track('Testing TrackJS!');
+      }
+      finally {
+        console.log ('Output is returned.');
+      }
+    });
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    
+    //Step 1 - Console Buttons
+    errorBtns[0].addEventListener ('click', () => {
+      console.log("Console Log Demo");
+    })
+
+    errorBtns[1].addEventListener ('click', () => {
+      console.error("Console Error Demo");
+    })
+
+    
+
+    errorBtns[2].addEventListener ('click', () => {
+      console.count("consoleCountDemo");
+    })
+
+    errorBtns[3].addEventListener ('click', () => {
+      console.warn("Console Warning Demo");
+    })
+
+    errorBtns[4].addEventListener ('click', () => {
+      const x = 100;
+      const y = "100";
+      const reason = 'x should be a string like y, not an integer (Console Assert Demo)';
+      console.assert(x===y, {x, y, reason});    
+    })
+    
+    errorBtns[5].addEventListener ('click', () => {
+      console.clear();
+    })
+
+    errorBtns[6].addEventListener ('click', () => {
+      console.dir(document.head); 
+    })
+
+    errorBtns[7].addEventListener ('click', () => {
+      console.dirxml(document); 
+    })
+
+    const label = 'Start Console Group Demo';
+    errorBtns[8].addEventListener ('click', () => {
+      console.group(label);
+      console.log ('Console Group Topic')
+    })
+    
+    errorBtns[9].addEventListener ('click', () => {
+      console.groupEnd(label);    
+    })
+    
+    let table = [
+      {
+        input1: '1',
+        input2: '2',
+        operand: '+',
+        output: '3'
+      },
+      {
+        input1: '1',
+        input2: '2',
+        operand: '-',
+        output: '-1'
+      },
+      {
+        input1: '1',
+        input2: '2',
+        operand: '*',
+        output: '2'
+      },
+      {
+        input1: '1',
+        input2: '2',
+        operand: '/',
+        output: '0.5'
+      }
+    ];
+    errorBtns[10].addEventListener ('click', () => {
+      console.table(table);
+    })
+
+    errorBtns[11].addEventListener ('click', () => {
+      console.time();
+    })
+
+    errorBtns[12].addEventListener ('click', () => {
+      console.timeEnd();
+    })
+
+    errorBtns[13].addEventListener ('click', () => {
+      const bottom = () => { nextToBottom(); };
+      const nextToBottom = () => { middle(); };
+      const middle = () => { nextToTop(); };
+      const nextToTop = () => { top(); };
+      const top = () => { console.trace(); };
+      bottom();
+    })
+    
+    //Step 3 - Custom Error
+    class ValidationError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "ValidationError";
+      }
+    }
+
+    //Step 4 - Global Error Handle
+    errorBtns[14].addEventListener ('click', () => {
+      undefinedFunction();
+    })
+    window.onerror = function() {
+      console.log("Error Occured");
+      TrackJS.track('Testing TrackJS!');
+    }
+
   </script>
 </body>
 
